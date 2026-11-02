@@ -13,15 +13,13 @@ app.use('/api/auth', authRoutes);
 const expenseRoutes = require('./routes/expenses');
 app.use('/api/expenses', expenseRoutes);
 
-
-
 app.get('/', (req, res) => {
   res.send('Hello, server is running!');
 });
 
-app.get('/categories', async (req, res) => {
+app.get('/api/categories', async (req, res) => {
   try {
-    const [rows] = await db.query('SELECT * FROM categories');
+    const [rows] = await db.query('SELECT * FROM categories ORDER BY id');
     res.json(rows);
   } catch (err) {
     console.error(err);

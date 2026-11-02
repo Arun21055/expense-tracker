@@ -31,7 +31,7 @@ router.post('/', async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const [rows] = await db.query(
-      `SELECT e.id, e.amount, e.note,
+      `SELECT e.id, e.amount, e.note, e.category_id,
         DATE_FORMAT(e.expense_date, '%Y-%m-%d') AS expense_date,
         c.name AS category
         FROM expenses e
