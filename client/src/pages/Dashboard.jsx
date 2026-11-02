@@ -2,16 +2,22 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import ExpenseForm from '../components/ExpenseForm';
+import CategoryChart from '../components/CategoryChart';
 
 function Dashboard() {
+  const [summary, setSummary] = useState([]);
   const [expenses, setExpenses] = useState([]);
   const [editing, setEditing] = useState(null);
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
   const loadExpenses = async () => {
-    const res = await api.get('/expenses');
-    setExpenses(res.data);
+    const [list, sum] = await Promise.all([
+        api.get('/expenses'),
+        api.get('/expenses/summary'),
+    ]);
+    setExpenses(list.data);
+    setSummary(sum.data);
   };
 
   useEffect(() => {
@@ -51,6 +57,11 @@ function Dashboard() {
         editing={editing}
         onCancel={() => setEditing(null)}
       />
+
+      <div className="bg-white rounded-lg shadow p-4 mb-6">
+        <h2 className="text-lg font-semibold mb-3">Spending by category</h2>
+        <CategoryChart data={summary} />
+      </div>
 
       <div className="bg-white rounded-lg shadow p-4">
         <div className="flex justify-between mb-3">

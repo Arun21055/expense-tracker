@@ -93,4 +93,23 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// Spending per category
+// Spending per category
+router.get('/summary', async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      `SELECT c.name, SUM(e.amount) AS total
+       FROM expenses e
+       JOIN categories c ON e.category_id = c.id
+       WHERE e.user_id = ?
+       GROUP BY c.name`,
+      [req.user.id]
+    );
+    res.json(rows.map((r) => ({ name: r.name, total: Number(r.total) })));
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 module.exports = router;
